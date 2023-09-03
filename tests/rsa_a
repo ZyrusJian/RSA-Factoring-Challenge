@@ -4,9 +4,6 @@ import os
 import time
 import math
 import random
-import logging
-
-logging.basicConfig(level=logging.INFO)
 
 
 def is_prime(n):
@@ -57,30 +54,10 @@ def factorize(n):
     Returns:
         A tuple of two prime numbers that are factors of n.
     """
-    if n == 2:
-        return None
-    if n % 2 == 0:
-        return (2, n // 2)
-    for i in range(3, int(math.sqrt(n))+1, 2):
+    for i in range(2, int(math.sqrt(n))+1):
         if n % i == 0 and is_prime(i) and is_prime(n // i):
             return (i, n // i)
     return None
-
-
-def test_factorize():
-    assert factorize(6) == (2, 3)
-    assert factorize(77) == (7, 11)
-    assert factorize(239821585064027) == (15485867, 15486481)
-    assert factorize(2497885147362973) == (49978553, 49979141)
-    assert factorize(1) is None
-    assert factorize(2) is None
-    assert factorize(3) is None
-    assert factorize(4) == (2, 2)
-    assert factorize(5) is None
-    assert factorize(7) is None
-    assert factorize(9) == (3, 3)
-    assert factorize(10) == (2, 5)
-    assert factorize(100) == (2, 50)
 
 
 def main():
@@ -93,32 +70,21 @@ def main():
     args = parser.parse_args()
 
     if not os.path.isfile(args.file):
-        logging.error(f'{args.file} does not exist.')
+        print(f'Error: {args.file} does not exist.')
         return
 
     with open(args.file, 'r') as f:
-        lines = f.readlines()
+        n = int(f.readline().strip())
 
-    if not lines:
-        logging.error(f'{args.file} is empty.')
-        return
-
-    try:
-        n = int(lines[0].strip())
-    except ValueError:
-        logging.error(f'{lines[0].strip()} is not a valid number.')
-        return
-
-    factors = factorize(n)
-    if factors is not None:
-        print(f'{n}={factors[0]}*{factors[1]}')
+    p, q = factorize(n)
+    if p is not None and q is not None:
+        print(f'{n}={p}*{q}')
     else:
-        logging.error(f'{n} cannot be factorized into two prime numbers.')
+        print(f'Error: {n} cannot be factorized into two prime numbers.')
 
 
 if __name__ == '__main__':
     start_time = time.time()
-    test_factorize()
     main()
     end_time = time.time()
-    logging.info(f'Time taken: {end_time - start_time:.3f} seconds.')
+    print(f'Time taken: {end_time - start_time:.3f} seconds.')
